@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Виселица</title>
+    <style>
+        @font-face{
+            font-family: KuricaLapoi;
+            src: url("KuricaLapoi-Regular.otf");
+        }@font-face{
+            font-family: Cheque;
+            src: url("Cheque-Regular.otf");
+        }
+        html{
+            display: flex;
+            -webkit-user-select: none;
+        }
+        body{
+            display: flex;
+            flex-direction: column;
+            width: 700px;
+            height: 550px;
+            align-items: center;
+        }
+        h1{
+            padding: 0;
+            margin: 0;
+            text-align: center;
+            font-family: Cheque;
+            font-size: 40px;
+        }
+        h2 {
+            font-family: KuricaLapoi;
+            padding: 0;
+            margin: 0;
+            width: 700px;
+            text-align: center;
+        }
+        #startGame{
+            width: 700px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        #word{
+        }
+        #game{
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 700px;
+            height: auto;
+        }
+        #buttons{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+        .letterTry{
+            font-family: KuricaLapoi;
+            font-size: 20px;
+            width: 30px;
+            height: 30px;
+        }
+        #visual{
+            width: 700px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #letters{
+            margin: 10px;
+            padding: 0;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            list-style: none;
+        }
+        .letter{
+            font-size: 20px;
+            font-family: KuricaLapoi;
+            text-align: center;
+            width: 30px;
+            height: 30px;
+            border: solid black 1px;
+        }
+        .space{
+            border: none;
+        }
+        #hangman{
+            width: 200px;
+            height: 300px;
+            margin: 15px;
+            background: -webkit-gradient(linear, 0 0, 0 100%, from(lightblue), to(deepskyblue));
+        }
+        #wordButton{
+            font-family: KuricaLapoi;
+            border-radius:  5px;
+            background: -webkit-gradient(linear, 0 0, 0 100%, from(white), to(white), color-stop(0.9, deepskyblue));
+        }
+        #replayButton{
+            display: none;
+            font-family: KuricaLapoi;
+        }
+        #stopButton{
+            font-family: KuricaLapoi;
+        }
+        #optionsButton{
+            font-family: KuricaLapoi;
+            border-radius:  5px;
+            background: -webkit-gradient(linear, 0 0, 0 100%, from(white), to(white), color-stop(0.9, deepskyblue));
+        }
+        #options{
+            display: flex;
+            font-family: KuricaLapoi;
+            flex-direction: column;
+            align-items: center;
+        }
+        #rulesHead{
+            font-weight:bold
+            font-family: KuricaLapoi;
+        }
+        #rulles{
+            font-size: 12px;
+            text-align: justify;
+        }
+        #livesOptions{
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+        }
+        #livesHead{
+            font-weight:bold
+            font-family: KuricaLapoi;
+            width: 700px;
+            text-align: center;
+        }
+        p{
+            font-family: KuricaLapoi;
+        }
+        #lives{
+            font-family: KuricaLapoi;
+        }
+        option{
+            border: none;
+        }
+    </style>
+</head>
+<body>
+<h1>Виселица</h1>
+    <div id="startGame">
+        <h2>НАЧАТЬ ИГРУ</h2>
+        <input onkeyup="return input(this);"  id="word" type="text" size="81" value="" placeholder="Загадайте слово. Можно использовать любые буквы русского алфавита, а также пробел и тире.">
+        <button onclick="startGame()" id="wordButton">НАЧАТЬ</button>
+        <button id="optionsButton" onclick="showOptions()">ДОПОЛНИТЕЛЬНО</button>
+        <div id="options" style="display:none">
+            <h4 id="rulesHead">ПРАВИЛА:</h4>
+            <p id="rulles">ОДИН ИЗ ИГРОКОВ ЗАГАДЫВАЕТ СЛОВО. ВТОРОЙ ИГРОК ПРЕДЛАГАЕТ БУКВЫ, КОТОРЫЕ МОГУТ ВХОДИТЬ В ЭТО СЛОВО. ЕСЛИ ОН ОКАЖЕТСЯ ПРАВ - ЭТИ БУКВЫ ОТКРЫВАЮТСЯ В СЛОВЕ, НО ЕСЛИ ОН ОШИБАЕТСЯ - ОН СТАНОВИТСЯ НА ШАГ БЛИЖЕ К СМЕРТИ.</p>
+            <div id="livesOptions">
+                <h4 id="livesHead">СЛОЖНОСТЬ ИГРЫ:</h4>
+                <p>ВЫБЕРИТЕ КОЛИЧЕСТВО ЖИЗНЕЙ: </p>
+                <select name="" id="lives">
+                    <option value="12">12</option>
+                    <option selected value="10">10</option>
+                    <option value="8">8</option>
+                    <option value="6">6</option>
+                </select>
+            </div>
+
+        </div>
+    </div>
+    <div id="game">
+        <div id="buttons">
+            <button class="letterTry" value="А" onclick="tryGame(this)">А</button>
+            <button class="letterTry" value="Б" onclick="tryGame(this)">Б</button>
+            <button class="letterTry" value="В" onclick="tryGame(this)">В</button>
+            <button class="letterTry" value="Г" onclick="tryGame(this)">Г</button>
+            <button class="letterTry" value="Д" onclick="tryGame(this)">Д</button>
+            <button class="letterTry" value="Е" onclick="tryGame(this)">Е</button>
+            <button class="letterTry" value="Ё" onclick="tryGame(this)">Ё</button>
+            <button class="letterTry" value="Ж" onclick="tryGame(this)">Ж</button>
+            <button class="letterTry" value="З" onclick="tryGame(this)">З</button>
+            <button class="letterTry" value="И" onclick="tryGame(this)">И</button>
+            <button class="letterTry" value="Й" onclick="tryGame(this)">Й</button>
+            <button class="letterTry" value="К" onclick="tryGame(this)">К</button>
+            <button class="letterTry" value="Л" onclick="tryGame(this)">Л</button>
+            <button class="letterTry" value="М" onclick="tryGame(this)">М</button>
+            <button class="letterTry" value="Н" onclick="tryGame(this)">Н</button>
+            <button class="letterTry" value="О" onclick="tryGame(this)">О</button>
+            <button class="letterTry" value="П" onclick="tryGame(this)">П</button>
+            <button class="letterTry" value="Р" onclick="tryGame(this)">Р</button>
+            <button class="letterTry" value="С" onclick="tryGame(this)">С</button>
+            <button class="letterTry" value="Т" onclick="tryGame(this)">Т</button>
+            <button class="letterTry" value="У" onclick="tryGame(this)">У</button>
+            <button class="letterTry" value="Ф" onclick="tryGame(this)">Ф</button>
+            <button class="letterTry" value="Х" onclick="tryGame(this)">Х</button>
+            <button class="letterTry" value="Ц" onclick="tryGame(this)">Ц</button>
+            <button class="letterTry" value="Ч" onclick="tryGame(this)">Ч</button>
+            <button class="letterTry" value="Ш" onclick="tryGame(this)">Ш</button>
+            <button class="letterTry" value="Щ" onclick="tryGame(this)">Щ</button>
+            <button class="letterTry" value="Ь" onclick="tryGame(this)">Ь</button>
+            <button class="letterTry" value="Ы" onclick="tryGame(this)">Ы</button>
+            <button class="letterTry" value="Ъ" onclick="tryGame(this)">Ъ</button>
+            <button class="letterTry" value="Э" onclick="tryGame(this)">Э</button>
+            <button class="letterTry" value="Ю" onclick="tryGame(this)">Ю</button>
+            <button class="letterTry" value="Я" onclick="tryGame(this)">Я</button>
+        </div>
+        <div id="visual">
+            <ul id="letters">
+
+            </ul>
+            <canvas id="hangman" onclick="image()" width="400" height="600"></canvas>
+        </div>
+
+        <button id="stopButton" onclick="stopGame()">СТОП</button>
+        <button id="replayButton" onclick="stopGame()">ЗАНОВО</button>
+    </div>
+
+<script>
+    function input(input) {
+        var value = input.value;
+        var rep = /[\.;/*&!@#$%^()_=+<>~`":,'a-zA-Z0-9]/;
+        if (rep.test(value)) {
+            value = value.replace(rep, '');
+            input.value = value;
+        }
+    }
+
+    var nope=0;
+    var lives;
+    var answer = [];
+    var mistake=0;
+    var correct=0;
+    var winScore=1;
+    var dashList = [];
+    var canvas = document.getElementById("hangman");
+    var ctx= canvas.getContext("2d");
+    function startGame () {
+        lives=document.getElementById("lives").value;
+        if (lives==6) {
+            lives=10;
+            mistake=4;
+        }
+        if (lives==8) {
+            lives=12;
+            mistake=4;
+        }
+        if (lives==10) {
+            lives=10;
+        }
+        if (lives==12) {
+            lives=12;
+        }
+        answer=document.getElementById("word").value;
+        if (answer==='') {return document.getElementById("word").placeholder="Введите слово в это поле."}
+        answer=answer.toUpperCase();
+        answer=answer.slice();
+        var i=answer.length;
+        for (var j=0; j<i; j++) {
+            var li=document.createElement("input");
+            if ((answer[j]===" ")||(answer[j]==="-")) {
+                li.setAttribute("class","space letter");
+                li.setAttribute("readonly","true");
+                li.setAttribute("value",answer[j]);
+                document.getElementById("letters").append(li);
+            } else {
+                li.setAttribute("class","letter");
+                li.setAttribute("readonly","true");
+                li.setAttribute("value","");
+                document.getElementById("letters").append(li);
+            }
+        }
+        document.getElementById("startGame").style.display="none";
+        document.getElementById("game").style.display="flex";
+        document.getElementById("stopButton").style.display="flex";
+        ctx.setLineDash(dashList);
+        ctx.clearRect(0, 0, 400, 600);
+        ctx.beginPath();
+        ctx.moveTo(70, 80);
+        ctx.bezierCurveTo(30, 100, 30, 150, 130, 150);
+        ctx.bezierCurveTo(150, 180, 220, 180, 240, 150);
+        ctx.bezierCurveTo(320, 150, 320, 120, 290, 100);
+        ctx.bezierCurveTo(330, 40, 270, 30, 240, 50);
+        ctx.bezierCurveTo(220, 5, 150, 20, 150, 50);
+        ctx.bezierCurveTo(100, 5, 50, 20, 70, 80);
+        ctx.closePath();
+        ctx.lineWidth = 5;
+        ctx.fillStyle = 'white';
+        ctx.fill();
+        ctx.strokeStyle = 'gray';
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(370, 130);
+        ctx.bezierCurveTo(330, 150, 330, 200, 430, 200);
+        ctx.bezierCurveTo(450, 230, 520, 230, 540, 200);
+        ctx.bezierCurveTo(620, 200, 620, 170, 590, 150);
+        ctx.bezierCurveTo(630, 90, 570, 80, 540, 100);
+        ctx.bezierCurveTo(520, 55, 450, 70, 450, 100);
+        ctx.bezierCurveTo(400, 55, 350, 70, 370, 130);
+        ctx.closePath();
+        ctx.lineWidth = 5;
+        ctx.fillStyle = 'white';
+        ctx.fill();
+        ctx.strokeStyle = 'gray';
+        ctx.stroke();
+        winScore=1;
+        image();
+    }
+    function tryGame(button) {
+        var n=answer.length;
+        var check=document.getElementsByClassName("letter");
+        for (var i=0; i<n;i++){
+            if (answer[i]===button.value){
+                check[i].value=answer[i];
+                check[i].style.backgroundColor="lightgreen";
+            } else {nope++}
+        }
+        button.style.display="none";
+        if (nope===n) {mistake++}
+        nope=0;
+        if (mistake===lives){
+            loseGame();
+        }
+        check=document.getElementsByClassName("letter");
+        for (i=0;i<n;i++){
+            if (answer[i]===check[i].value){correct++}
+        }
+        if (correct===n){
+            setTimeout(endGame,500);
+        }
+        correct=0;
+        image();
+    }
+    function stopGame() {
+        document.getElementById("startGame").style.display="flex";
+        document.getElementById("game").style.display="none";
+        document.getElementById("word").value="";
+        answer=[];
+        nope=0;
+        mistake=0;
+        correct=0;
+        var list=document.getElementById("letters");
+        while (list.firstChild) {
+            list.removeChild(list.firstChild);
+        }
+        list=document.getElementsByClassName("letterTry");
+        for (var i=0; i<list.length; i++) {
+            list[i].style.display="flex";
+        }
+        document.getElementById("replayButton").style.display="none";
+        document.getElementById("word").placeholder="Загадайте слово. Можно использовать любые буквы русского алфавита, а также пробел и тире.";
+        document.getElementById('hangman').style.background="-webkit-gradient(linear, 0 0, 0 100%, from(lightblue), to(deepskyblue))";
+        dashList = [];
+    }
+    function endGame() {
+        var list=document.getElementsByClassName("letterTry");
+        for (i=0; i<list.length; i++) {
+            list[i].style.display="none";
+        }
+        document.getElementById("replayButton").style.display="flex";
+        document.getElementById("stopButton").style.display="none";
+        if (winScore===1) {
+            ctx.clearRect(0, 0, 400, 600);
+            ctx.beginPath();
+            ctx.fillStyle="gold";
+            ctx.arc(400, 0, 150, 0, Math.PI*5,false);
+            ctx.lineWidth=8;
+            ctx.strokeStyle = "gold";
+            ctx.moveTo(400,0);
+            ctx.lineTo(150, 30);
+            ctx.moveTo(400,0);
+            ctx.lineTo(180, 120);
+            ctx.moveTo(400,0);
+            ctx.lineTo(250, 200);
+            ctx.moveTo(400,0);
+            ctx.lineTo(360, 240);
+            ctx.stroke();
+            ctx.fill();
+            ctx.closePath();
+            ctx.beginPath();
+            ctx.fillStyle="white";
+            ctx.moveTo(80,30);
+            ctx.bezierCurveTo(110, 30, 110, 60, 110, 50);
+            ctx.bezierCurveTo(110, 60, 110, 30, 140, 30);
+            ctx.bezierCurveTo(130, 35, 120, 45, 110, 50);
+            ctx.bezierCurveTo(100, 45, 90, 35, 80, 30);
+            ctx.lineWidth=2;
+            ctx.strokeStyle = "black";
+            ctx.stroke();
+            ctx.fill();
+            ctx.moveTo(30,80);
+            ctx.bezierCurveTo(60, 80, 60, 110, 60, 100);
+            ctx.bezierCurveTo(60, 110, 60, 80, 90, 80);
+            ctx.bezierCurveTo(80, 85, 70, 95, 60, 100);
+            ctx.bezierCurveTo(50, 95, 40, 85, 30, 80);
+            ctx.lineWidth=2;
+            ctx.strokeStyle = "black";
+            ctx.stroke();
+            ctx.fill();
+            ctx.moveTo(130,130);
+            ctx.bezierCurveTo(160, 130, 160, 160, 160, 150);
+            ctx.bezierCurveTo(160, 160, 160, 130, 190, 130);
+            ctx.bezierCurveTo(180, 135, 170, 145, 160, 150);
+            ctx.bezierCurveTo(150, 145, 140, 135, 130, 130);
+            ctx.lineWidth=2;
+            ctx.strokeStyle = "black";
+            ctx.stroke();
+            ctx.fill();
+            ctx.closePath();
+
+            ctx.beginPath();
+            ctx.fillStyle="gray";
+            ctx.arc(250, 280, 50, 0, Math.PI*5,false);
+            ctx.lineWidth=5;
+            ctx.strokeStyle = "black";
+            ctx.moveTo(250,330);
+            ctx.lineTo(250, 460);
+            ctx.moveTo(250,340);
+            ctx.lineTo(150, 380);
+            ctx.moveTo(250,340);
+            ctx.lineTo(350, 380);
+            ctx.moveTo(250,460);
+            ctx.lineTo(200, 600);
+            ctx.moveTo(250,460);
+            ctx.lineTo(300, 600);
+            ctx.stroke();
+            ctx.fill();
+            ctx.closePath();
+        } else {
+            document.getElementById('hangman').style.background="-webkit-gradient(linear, 0 0, 0 100%, from(lightgray), to(darkgray))";
+            dashList = [12, 6, 24, 9, 10, 5];
+            var p=0;
+            for (var l=0;l<700;l+=25) {
+                ctx.beginPath();
+                ctx.setLineDash(dashList);
+                ctx.lineJoin = "round";
+                ctx.moveTo(l,p);
+                ctx.lineTo(l-300, 600);
+                ctx.lineWidth=1;
+                ctx.strokeStyle = "gray";
+                ctx.stroke();
+                ctx.closePath();
+                p-=25;
+            }
+        }
+    }
+    function loseGame() {
+        var n=answer.length;
+        var check=document.getElementsByClassName("letter");
+        for (var i=0; i<n;i++){
+            if (answer[i]===check[i].value){
+
+            } else {check[i].value=answer[i];
+                check[i].style.backgroundColor="red";}
+        }
+        winScore--;
+    }
+    function image() {
+        dashList=[];
+        ctx.setLineDash(dashList);
+        if (mistake>=1) {
+            ctx.beginPath();
+            ctx.moveTo(0,600);
+            ctx.lineTo(400, 600);
+            ctx.lineWidth=40;
+            ctx.strokeStyle = "brown";
+            ctx.stroke();
+            ctx.closePath();
+        }
+        if (mistake>=2) {
+            ctx.beginPath();
+            ctx.moveTo(100,600);
+            ctx.lineTo(100, 0);
+            ctx.lineWidth=10;
+            ctx.strokeStyle = "brown";
+            ctx.stroke();
+            ctx.closePath();
+        }
+        if (mistake>=3) {
+            ctx.beginPath();
+            ctx.moveTo(100,0);
+            ctx.lineTo(300, 0);
+            ctx.lineWidth=20;
+            ctx.strokeStyle = "brown";
+            ctx.stroke();
+            ctx.closePath();
+        }
+        if (mistake>=4) {
+            ctx.beginPath();
+            ctx.moveTo(300,0);
+            ctx.lineTo(300, 100);
+            ctx.lineWidth=10;
+            ctx.strokeStyle = "yellow";
+            ctx.stroke();
+            ctx.closePath();
+        }
+        if (mistake>=5) {
+            ctx.beginPath();
+            ctx.fillStyle="gray";
+            ctx.arc(300, 150, 50, 0, Math.PI*5,false);
+            ctx.lineWidth=5;
+            ctx.strokeStyle = "black";
+            ctx.stroke();
+            ctx.fill();
+            ctx.closePath();
+        }
+        if (mistake>=6) {
+            ctx.beginPath();
+            ctx.moveTo(300,200);
+            ctx.lineTo(300, 210);
+            ctx.lineWidth=15;
+            ctx.strokeStyle = "yellow";
+            ctx.stroke();
+            ctx.closePath();
+            ctx.beginPath();
+            ctx.moveTo(300,210);
+            ctx.lineTo(300, 330);
+            ctx.lineWidth=5;
+            ctx.strokeStyle = "black";
+            ctx.stroke();
+            ctx.closePath();
+        }
+        if (mistake>=7) {
+            ctx.beginPath();
+            ctx.moveTo(300,210);
+            ctx.lineTo(200, 250);
+            ctx.lineWidth=5;
+            ctx.strokeStyle = "black";
+            ctx.stroke();
+            ctx.closePath();
+        }
+        if (mistake>=8) {
+            ctx.beginPath();
+            ctx.moveTo(300,210);
+            ctx.lineTo(400, 250);
+            ctx.lineWidth=5;
+            ctx.strokeStyle = "black";
+            ctx.stroke();
+            ctx.closePath();
+        }
+        if (mistake>=9) {
+            ctx.beginPath();
+            ctx.moveTo(300,330);
+            ctx.lineTo(250, 470);
+            ctx.lineWidth=5;
+            ctx.strokeStyle = "black";
+            ctx.stroke();
+            ctx.closePath();
+        }
+        if (mistake>=10) {
+            ctx.beginPath();
+            ctx.moveTo(300,330);
+            ctx.lineTo(350, 470);
+            ctx.lineWidth=5;
+            ctx.strokeStyle = "black";
+            ctx.stroke();
+            ctx.closePath();
+        }
+        if (mistake===11) {
+            ctx.beginPath();
+            ctx.moveTo(220,470);
+            ctx.lineTo(380, 470);
+            ctx.moveTo(250, 470);
+            ctx.lineTo(250, 600);
+            ctx.moveTo(350, 470);
+            ctx.lineTo(350, 600);
+            ctx.lineWidth=10;
+            ctx.strokeStyle = "brown";
+            ctx.stroke();
+            ctx.closePath();
+        }
+        if (mistake===12) {
+            ctx.clearRect(215,465,170,115)
+        }
+    }
+    function showOptions() {
+        var obg=document.getElementById("options");
+        if (obg.style.display=="none"){
+            obg.style.display="flex"
+        } else {
+            obg.style.display="none"
+        }
+    }
+</script>
+</body>
+</html>
